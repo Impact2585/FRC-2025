@@ -30,7 +30,7 @@ import frc.robot.subsystems.CoralRollers;
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-    private double speedLimiter = 0.25;
+    private double speedLimiter = 0.5;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -79,13 +79,15 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
+        /*
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
         joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         );
-
+        */
+        
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -110,8 +112,8 @@ public class RobotContainer {
 
         //rollers for subsystems
         subjoystick.rightBumper().onTrue(new RunCommand(() -> algaeroller.spinOut()));
-        subjoystick.rightBumper().onTrue(new RunCommand(() -> coralroller.spinIn()));
-        subjoystick.leftBumper().onTrue(new RunCommand(() -> algaeroller.spinIn()));
+        subjoystick.rightBumper().onFalse(new RunCommand(() -> coralroller.spinIn()));
+        subjoystick.leftBumper().onFalse(new RunCommand(() -> algaeroller.spinIn()));
         subjoystick.leftBumper().onTrue(new RunCommand(() -> coralroller.spinOut()));
 
     }
@@ -119,12 +121,14 @@ public class RobotContainer {
     public void IncSpeed(){
         if (speedLimiter < 1.0){
             speedLimiter += 0.1;
+            SmartDashboard.putNumber("Swerve Speed", speedLimiter);
         }
     }
 
     public void DecSpeed(){
-        if (speedLimiter > .1){
-            speedLimiter -= .1;
+        if (speedLimiter > 0.1){
+            speedLimiter -= 0.1;
+            SmartDashboard.putNumber("Swerve Speed", speedLimiter);
         }
     }
 
