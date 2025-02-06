@@ -5,26 +5,33 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.CoralRollersConstants;
+
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class CoralRollers extends SubsystemBase {
-
-    private SparkMaxConfig Coralrollersconfig = new SparkMaxConfig();
-    private SparkMax CoralRollersLowerMotor = new SparkMax(CoralRollersConstants.lowerCoralRollersMotorCanId, MotorType.kBrushless);
-    private SparkMax CoralRollersUpperMotor = new SparkMax(CoralRollersConstants.upperCoralRollersMotorCanId, MotorType.kBrushless);
+    //1 = left (facing forwards), 2 = right (facing forwards)
+    private SparkMaxConfig coralRollerMotorConfig = new SparkMaxConfig();
+    private SparkMax ChuteMotor1 = new SparkMax(CoralRollersConstants.chuteMotor1CanId, MotorType.kBrushless);
+    private SparkMax ChuteMotor2 = new SparkMax(CoralRollersConstants.chuteMotor2CanId, MotorType.kBrushless);
+    private SparkMax CoralRoller1 = new SparkMax(CoralRollersConstants.coralRoller1CanId, MotorType.kBrushless);
+    private SparkMax CoralRoller2 = new SparkMax(CoralRollersConstants.coralRoller1CanId, MotorType.kBrushless);
 
     private double CoralRollersStatus;
 
     public CoralRollers() {
-        Coralrollersconfig
+        coralRollerMotorConfig
+            .inverted(false)
+            .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(20);
-        stopCoralRollers();
 
-        CoralRollersLowerMotor.configure(Coralrollersconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        CoralRollersUpperMotor.configure(Coralrollersconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        ChuteMotor1.configure(coralRollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        ChuteMotor2.configure(coralRollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        CoralRoller1.configure(coralRollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        CoralRoller2.configure(coralRollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
@@ -32,20 +39,22 @@ public class CoralRollers extends SubsystemBase {
 
     }
 
-    public void spinIn() {
-        System.out.println("spinning");
-        CoralRollersLowerMotor.set(CoralRollersConstants.maxSpeed);
-        CoralRollersUpperMotor.set(CoralRollersConstants.maxSpeed);
+    public void preRoller() {
+        ChuteMotor1.set(CoralRollersConstants.chuteSpeed);
+        ChuteMotor2.set(CoralRollersConstants.chuteSpeed);
+        CoralRoller1.set(CoralRollersConstants.rollerSlowSpeed);
+        CoralRoller2.set(CoralRollersConstants.rollerSlowSpeed);
     }
 
-    public void spinOut(){
-        System.out.println("spinning out");
-        CoralRollersLowerMotor.set(-CoralRollersConstants.maxSpeed);
-        CoralRollersUpperMotor.set(-CoralRollersConstants.maxSpeed);
+    public void scoreOut(){
+        CoralRoller1.set(CoralRollersConstants.rollerFastSpeed);
+        CoralRoller2.set(CoralRollersConstants.rollerFastSpeed);
     }
 
     public void stopCoralRollers(){
-        CoralRollersLowerMotor.set(0);
-        CoralRollersUpperMotor.set(0);
+        CoralRoller1.set(0);
+        CoralRoller2.set(0);
+        ChuteMotor1.set(0);
+        ChuteMotor2.set(0);
     }
 }

@@ -48,9 +48,9 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final Elevator elevator = new Elevator();
-    private final AlgaeRollers algaeroller = new AlgaeRollers();
-    private final CoralRollers coralroller = new CoralRollers();
+    //private final Elevator elevator = new Elevator();
+    //private final AlgaeRollers algaeroller = new AlgaeRollers();
+    //private final CoralRollers coralroller = new CoralRollers();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -87,7 +87,7 @@ public class RobotContainer {
             forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         );
         */
-        
+        /* 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -99,7 +99,8 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-
+        
+        /*
         //elevator coral presets
         subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
         subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
@@ -107,15 +108,33 @@ public class RobotContainer {
         subjoystick.rightBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
         subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.loweredPos));
 
-        joystick.povUp().onTrue(new RunCommand(() -> this.IncSpeed()));
-        joystick.povDown().onTrue(new RunCommand(() -> this.DecSpeed()));
+        subjoystick.povUp().onTrue(new RunCommand(() -> elevator.raiseElevator()));
+        subjoystick.povDown().onTrue(new RunCommand(() -> elevator.lowerElevator()));
+        subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
+        subjoystick.povDown().onTrue(new RunCommand(() -> elevator.stopElevator()));
+        */
 
+        joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(1.000)));
+        joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.500)));
+        joystick.povLeft().whileTrue(new RunCommand(() -> this.setSpeed(0.200)));
+        joystick.povDown().whileTrue(new RunCommand(() -> this.setSpeed(0.066)));
+        
+        /* 
         //rollers for subsystems
         subjoystick.rightBumper().onTrue(new RunCommand(() -> algaeroller.spinOut()));
         subjoystick.rightBumper().onFalse(new RunCommand(() -> coralroller.spinIn()));
         subjoystick.leftBumper().onFalse(new RunCommand(() -> algaeroller.spinIn()));
         subjoystick.leftBumper().onTrue(new RunCommand(() -> coralroller.spinOut()));
+        */
 
+    }
+
+    public void setSpeed(double spe){
+        speedLimiter = spe;
+        if(spe == 0.066) SmartDashboard.putString("Swerve Speed", "CRAWL");
+        if(spe == 0.2) SmartDashboard.putString("Swerve Speed", "LOW");
+        if(spe == 0.5) SmartDashboard.putString("Swerve Speed", "MID");
+        if(spe == 1.0) SmartDashboard.putString("Swerve Speed", "HIGH");
     }
 
     public void IncSpeed(){

@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class AlgaeRollers extends SubsystemBase {
 
     private SparkMaxConfig algaerollersconfig = new SparkMaxConfig();
-    private SparkMax AlgaeRollersLowerMotor = new SparkMax(AlgaeRollersConstants.lowerAlgaeRollersMotorCanId, MotorType.kBrushless);
-    private SparkMax AlgaeRollersUpperMotor = new SparkMax(AlgaeRollersConstants.upperAlgaeRollersMotorCanId, MotorType.kBrushless);
+    private SparkMax AlgaeRoller1 = new SparkMax(AlgaeRollersConstants.lowerAlgaeRollersMotorCanId, MotorType.kBrushless);
+    private SparkMax AlgaeRoller2 = new SparkMax(AlgaeRollersConstants.upperAlgaeRollersMotorCanId, MotorType.kBrushless);
 
     private double AlgaeRollersStatus;
 
@@ -23,8 +23,8 @@ public class AlgaeRollers extends SubsystemBase {
             .smartCurrentLimit(20);
         stopAlgaeRollers();
 
-        AlgaeRollersLowerMotor.configure(algaerollersconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        AlgaeRollersUpperMotor.configure(algaerollersconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        AlgaeRoller1.configure(algaerollersconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        AlgaeRoller2.configure(algaerollersconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
@@ -34,18 +34,18 @@ public class AlgaeRollers extends SubsystemBase {
 
     public void spinIn() {
         System.out.println("spinning");
-        AlgaeRollersLowerMotor.set(AlgaeRollersConstants.maxSpeed);
-        AlgaeRollersUpperMotor.set(AlgaeRollersConstants.maxSpeed);
+        AlgaeRoller1.set(AlgaeRollersConstants.maxSpeed);
+        AlgaeRoller2.set(AlgaeRollersConstants.maxSpeed);
     }
 
     public void spinOut(){
         System.out.println("spinning out");
-        AlgaeRollersLowerMotor.set(-AlgaeRollersConstants.maxSpeed);
-        AlgaeRollersUpperMotor.set(-AlgaeRollersConstants.maxSpeed);
+        AlgaeRoller1.set(-AlgaeRollersConstants.maxSpeed);
+        AlgaeRoller2.set(-AlgaeRollersConstants.maxSpeed);
     }
 
     public void stopAlgaeRollers(){
-        AlgaeRollersLowerMotor.set(0);
-        AlgaeRollersUpperMotor.set(0);
+        AlgaeRoller1.set(0);
+        AlgaeRoller2.set(0);
     }
 }

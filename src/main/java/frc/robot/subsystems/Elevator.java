@@ -1,13 +1,18 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import frc.robot.Constants.ElevatorConstants;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+// import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -17,61 +22,43 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends SubsystemBase {
-    CANSparkMax elevatorMotor = new CANSparkMax(ElevatorConstants.elevatorCanID, MotorType.kBrushless);
-    RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
-    CANSparkMax rollerMotor = new CANSparkMax(ElevatorConstants.rollerCanID, MotorType.kBrushless);
+    //1 = left (facing forwards), 2 = right (facing forwards)
+    SparkMax elevatorMotor1 = new SparkMax(ElevatorConstants.elevator1CanID, MotorType.kBrushless);
+    SparkMax elevatorMotor2 = new SparkMax(ElevatorConstants.elevator2CanID, MotorType.kBrushless);
+    SparkMaxConfig elevatorMotor1Config = new SparkMaxConfig();
+    SparkMaxConfig elevatorMotor2Config = new SparkMaxConfig();
+    RelativeEncoder elevatorEncoder1 = elevatorMotor1.getEncoder();
+    RelativeEncoder elevatorEncoder2 = elevatorMotor2.getEncoder();
     boolean canUp = true;
     boolean canDown = true;
     double status = 1.0;
     boolean locked = true;
 
     public Elevator() {
-        elevatorEncoder.setPosition(1);
-        elevatorMotor.setInverted(true);
+        elevatorMotor1Config
+            .inverted(true)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(20);
+        elevatorEncoder1.setPosition(0);
+        elevatorEncoder2.setPosition(0);
         //elevatorEncoder.setInverted(true);
-        elevatorMotor.setIdleMode(IdleMode.kBrake);
-        elevatorMotor.setSmartCurrentLimit(20);
-        rollerMotor.setSmartCurrentLimit(20);
+
+        elevatorMotor2Config
+            .inverted(false)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(20);
+        elevatorEncoder1.setPosition(0);
+        elevatorMotor1.configure(elevatorMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Elevator position", elevatorEncoder.getPosition());
-
-        SmartDashboard.putBoolean("Elevator locked?", locked);
-        
-        if(elevatorEncoder.getPosition() > ElevatorConstants.elevatorHighStop) {
-            canUp = false;
-            if(status != 2 && locked) elevatorMotor.set(0);
-            if(status != 2 && locked) System.out.println("Elevator at high point");
-            status = 2.0;
-        }
-        else {
-            canUp = true;
-            status = 1.0;
-        }
-
-        SmartDashboard.putBoolean("Elevator can go up?", canUp);
-        
-        if(elevatorEncoder.getPosition() < ElevatorConstants.elevatorLowStop) {
-            canDown = false;
-            if(status != 0 && locked) elevatorMotor.set(0);
-            if(status != 0 && locked) System.out.println("Elevator at low point");
-            status = 0.0;
-        }
-        else {
-            canDown = true;
-            status = 1.0;
-        }
-
-        SmartDashboard.putBoolean("Elevator can go down?", canDown);
-
-        SmartDashboard.putNumber("Elevator status", status);
+        SmartDashboard.putNumber("Elevator position", (elevatorEncoder1.getPosition() + elevatorEncoder2.getPosition()) / 2.0);
     }
 
     public void setMotor(double speed){
-        if(Math.abs(speed) > ElevatorConstants.elevatorSpeed) speed = sign(speed) * ElevatorConstants.elevatorSpeed;
-        elevatorMotor.set(speed);
+        elevatorMotor1.set(speed);
+        elevatorMotor2.set(speed);
     }
 
     public double sign(double x){
@@ -80,33 +67,22 @@ public class Elevator extends SubsystemBase {
     }
 
     public void raiseElevator() {
-        if(canUp || !locked) elevatorMotor.set(ElevatorConstants.elevatorSpeed);
-        System.out.println("Elevator raising");
+        elevatorMotor1.set(ElevatorConstants.elevatorSpeed);
+        elevatorMotor2.set(ElevatorConstants.elevatorSpeed);
     }
 
     public void lowerElevator(){
-        if(canDown || !locked) elevatorMotor.set(-ElevatorConstants.elevatorSpeed);
-        System.out.println("Elevator lowering");
-    }
-
-    public void intakeRoller(){
-        rollerMotor.set(-ElevatorConstants.rollerSpeed);
-    }
-
-    public void outtakeRoller(){
-        rollerMotor.set(ElevatorConstants.rollerSpeed);
-    }
-
-    public void stopRoller(){
-        rollerMotor.set(0);
+        elevatorMotor1.set(-ElevatorConstants.elevatorSpeed);
+        elevatorMotor2.set(-ElevatorConstants.elevatorSpeed);
     }
     
     public void stopElevator(){
-        elevatorMotor.set(0);
+        elevatorMotor1.set(0);
+        elevatorMotor2.set(0);
     }
 
     public double getEncoderPos() {
-        return elevatorEncoder.getPosition();
+        return ((elevatorEncoder1.getPosition() + elevatorEncoder2.getPosition()) / 2.0);
     }
 
     public void unlock(){
@@ -115,18 +91,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public void lock(){
-        locked = true;
-        elevatorEncoder.setPosition(1);
+
     }
 
     public void score(){
-        elevatorMotor.set(ElevatorConstants.elevatorSpeed);
-        new WaitCommand(0.5);
-        rollerMotor.set(ElevatorConstants.rollerSpeed);
+
     }
 
     public void stopAll(){
-        elevatorMotor.set(0);
-        rollerMotor.set(0);
+
     }
 }

@@ -23,11 +23,12 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static final class ElevatorConstants{
-        public static final int elevatorCanID = 41;
-        public static final int rollerCanID = 42;
+        public static final int elevator1CanID = 41;
+        public static final int elevator2CanID = 42;
+        public static final int rollerCanID = 31;
     
         public static final double rollerSpeed = 0.5;
-        public static final double elevatorSpeed = 0.4;
+        public static final double elevatorSpeed = 0.1;
     
         public static final double elevatorLowStop = 0;
         public static final double elevatorHighStop = 120;
@@ -37,6 +38,27 @@ public final class Constants {
         public static final double eD = 0;
     
         public static final double loweredPos = 0;
-        public static final double sourcePos = 50;
+        public static final double l1 = 10;
+        public static final double l2 = 25;
+        public static final double l3 = 32;
+        public static final double l4 = 50;
+      }
+
+      public static final class AlgaeRollersConstants{
+        public static final int lowerAlgaeRollersMotorCanId = 11;
+        public static final int upperAlgaeRollersMotorCanId = 12;
+    
+        public static final double maxSpeed = 0.4;
+      }
+      public static final class CoralRollersConstants{
+        public static final int chuteMotor1CanId = 11;
+        public static final int chuteMotor2CanId = 12;
+
+        public static final int coralRoller1CanId = 13;
+        public static final int coralRoller2CanId = 14;
+    
+        public static final double chuteSpeed = 0.4;
+        public static final double rollerSlowSpeed = 0.1;
+        public static final double rollerFastSpeed = 0.4;
       }
 }
