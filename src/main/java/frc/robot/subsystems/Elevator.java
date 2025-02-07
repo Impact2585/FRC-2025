@@ -39,21 +39,23 @@ public class Elevator extends SubsystemBase {
             .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(20);
+
         elevatorEncoder1.setPosition(0);
         elevatorEncoder2.setPosition(0);
         //elevatorEncoder.setInverted(true);
 
         elevatorMotor2Config
-            .inverted(false)
+            .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(20);
-        elevatorEncoder1.setPosition(0);
-        elevatorMotor1.configure(elevatorMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        elevatorMotor1.configure(elevatorMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        elevatorMotor2.configure(elevatorMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Elevator position", (elevatorEncoder1.getPosition() + elevatorEncoder2.getPosition()) / 2.0);
+        SmartDashboard.putNumber("Elevator position", (elevatorEncoder1.getPosition()  + elevatorEncoder2.getPosition()) / 2.0);
     }
 
     public void setMotor(double speed){
