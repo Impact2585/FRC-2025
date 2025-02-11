@@ -41,7 +41,7 @@ public class CoralRollers extends SubsystemBase {
 
     public void preRoller() {
         System.out.println("rolling");
-        //ChuteMotor1.set(CoralRollersConstants.chuteSpeed);
+        //ChuteMotor1.set(-CoralRollersConstants.chuteSpeed);
         //ChuteMotor2.set(CoralRollersConstants.chuteSpeed);
         CoralRoller1.set(CoralRollersConstants.rollerSlowSpeed);
         //CoralRoller2.set(CoralRollersConstants.rollerSlowSpeed);
