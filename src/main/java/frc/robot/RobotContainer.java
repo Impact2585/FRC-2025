@@ -32,6 +32,7 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private double speedLimiter = 0.5;
+    private double curSetPoint = 0.0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -110,22 +111,20 @@ public class RobotContainer {
         */
         
         //elevator coral presets
-        subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
-        subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
-        subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
-        subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
+        // subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
+        // subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
+        // subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
+        // subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
 
-        subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.raiseElevator()));
-        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.lowerElevator()));
+        subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.setMotor(ElevatorConstants.elevatorSpeed)));
+        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed + 0.4)));
         subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
         subjoystick.povDown().onFalse(new RunCommand(() -> elevator.stopElevator()));
-        
 
         joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(1.000)));
         joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.500)));
         joystick.povLeft().whileTrue(new RunCommand(() -> this.setSpeed(0.200)));
         joystick.povDown().whileTrue(new RunCommand(() -> this.setSpeed(0.066)));
-        
         
         //rollers for subsystems
         subjoystick.rightBumper().whileTrue(new RunCommand(() -> coralroller.scoreOut()));
@@ -155,6 +154,12 @@ public class RobotContainer {
             speedLimiter -= 0.1;
             SmartDashboard.putNumber("Swerve Speed", speedLimiter);
         }
+    }
+
+    public void setElevator(double sp){
+        curSetPoint = sp;
+        SmartDashboard.putNumber("Elevator Setpoint", curSetPoint);
+        new ElevatorPID(elevator, sp);
     }
 
     public Command getAutonomousCommand() {

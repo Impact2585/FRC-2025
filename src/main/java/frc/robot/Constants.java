@@ -28,12 +28,12 @@ public final class Constants {
         public static final int rollerCanID = 31;
     
         public static final double rollerSpeed = 0.5;
-        public static final double elevatorSpeed = 0.05;
+        public static final double elevatorSpeed = 0.5;
     
         public static final double elevatorLowStop = 0;
         public static final double elevatorHighStop = 120;
     
-        public static final double eP = 0.04;
+        public static final double eP = 0.02;
         public static final double eI = 0.002;
         public static final double eD = 0;
     
@@ -46,15 +46,15 @@ public final class Constants {
       }
 
       public static final class AlgaeRollersConstants{
-        public static final int lowerAlgaeRollersMotorCanId = 11;
-        public static final int upperAlgaeRollersMotorCanId = 12;
+        public static final int lowerAlgaeRollersMotorCanId = 31;
+        public static final int upperAlgaeRollersMotorCanId = 32;
     
         public static final double maxSpeed = 0.4;
       }
 
       public static final class CoralRollersConstants{
-        public static final int chuteMotor1CanId = 13;
-        public static final int chuteMotor2CanId = 14;
+        public static final int chuteMotor1CanId = 51;
+        public static final int chuteMotor2CanId = 52;
 
         public static final int coralRoller1CanId = 21;
         public static final int coralRoller2CanId = 22;
