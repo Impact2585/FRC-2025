@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -29,6 +30,7 @@ public class Elevator extends SubsystemBase {
     SparkMaxConfig elevatorMotor2Config = new SparkMaxConfig();
     RelativeEncoder elevatorEncoder1 = elevatorMotor1.getEncoder();
     RelativeEncoder elevatorEncoder2 = elevatorMotor2.getEncoder();
+    PIDController elevatorPID;
     boolean canUp = true;
     boolean canDown = true;
     double status = 1.0;
@@ -38,7 +40,7 @@ public class Elevator extends SubsystemBase {
         elevatorMotor1Config
             .inverted(true)
             .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(20);
+            .smartCurrentLimit(40);
 
         elevatorEncoder1.setPosition(0);
         elevatorEncoder2.setPosition(0);
@@ -47,15 +49,18 @@ public class Elevator extends SubsystemBase {
         elevatorMotor2Config
             .inverted(true)
             .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(20);
+            .smartCurrentLimit(40);
 
         elevatorMotor1.configure(elevatorMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorMotor2.configure(elevatorMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        elevatorPID = new PIDController(ElevatorConstants.eP, ElevatorConstants.eI, ElevatorConstants.eD);
+        elevatorPID.setTolerance(1);
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Elevator position", (elevatorEncoder1.getPosition()  + elevatorEncoder2.getPosition()) / 2.0);
+        SmartDashboard.putNumber("Elevator effective power", ((elevatorMotor1.getAppliedOutput() + elevatorMotor2.getAppliedOutput()) / 2.0));
     }
 
     public void setMotor(double speed){
@@ -85,6 +90,16 @@ public class Elevator extends SubsystemBase {
 
     public double getEncoderPos() {
         return ((elevatorEncoder1.getPosition() + elevatorEncoder2.getPosition()) / 2.0);
+    }
+
+    public Command elevatorToSetPoint(double elevatorSetPoint){
+        elevatorPID.setSetpoint(elevatorSetPoint);
+        SmartDashboard.putNumber("Elevator setpoint", elevatorSetPoint);
+        return run(() -> setMotor(elevatorPID.calculate(getEncoderPos(), elevatorSetPoint)));
+    }
+
+    public Command disableElevatorPID(){
+        return run(() -> elevatorPID.reset());
     }
 
     public void unlock(){

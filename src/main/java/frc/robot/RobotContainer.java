@@ -62,8 +62,10 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Mode", autoChooser);
 
         // register commands to pathplanner
-        NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
-        NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
+        // NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
+        // NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
+        NamedCommands.registerCommand("elevatorL4", elevator.elevatorToSetPoint(ElevatorConstants.l4));
+        NamedCommands.registerCommand("elevatorL1", elevator.elevatorToSetPoint(ElevatorConstants.l1));
         NamedCommands.registerCommand("scoreOut", new RunCommand(() -> coralroller.scoreOut()));
         NamedCommands.registerCommand("preRoller", new RunCommand(() -> coralroller.preRoller()));
         NamedCommands.registerCommand("stopCoralRollers", new RunCommand(() -> coralroller.preRoller()));
@@ -116,8 +118,15 @@ public class RobotContainer {
         // subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
         // subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
 
+        subjoystick.x().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l1));
+        subjoystick.y().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l2));
+        subjoystick.a().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l3));
+        subjoystick.b().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l4));
+
+        subjoystick.povUp().onTrue(elevator.disableElevatorPID());
+        subjoystick.povDown().onTrue(elevator.disableElevatorPID());
         subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.setMotor(ElevatorConstants.elevatorSpeed)));
-        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed + 0.4)));
+        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed + 0.1)));
         subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
         subjoystick.povDown().onFalse(new RunCommand(() -> elevator.stopElevator()));
 
@@ -159,7 +168,8 @@ public class RobotContainer {
     public void setElevator(double sp){
         curSetPoint = sp;
         SmartDashboard.putNumber("Elevator Setpoint", curSetPoint);
-        new ElevatorPID(elevator, sp);
+        elevator.elevatorToSetPoint(sp);
+        // new ElevatorPID(elevator, sp);
     }
 
     public Command getAutonomousCommand() {

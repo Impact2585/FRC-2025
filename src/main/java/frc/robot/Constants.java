@@ -28,7 +28,7 @@ public final class Constants {
         public static final int rollerCanID = 31;
     
         public static final double rollerSpeed = 0.5;
-        public static final double elevatorSpeed = 0.5;
+        public static final double elevatorSpeed = 0.2;
     
         public static final double elevatorLowStop = 0;
         public static final double elevatorHighStop = 120;
