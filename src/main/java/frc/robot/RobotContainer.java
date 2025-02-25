@@ -27,6 +27,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralRollers;
+import frc.robot.subsystems.Climb;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -51,8 +52,9 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private final Elevator elevator = new Elevator();
-    //private final AlgaeRollers algaeroller = new AlgaeRollers();
+    private final AlgaeRollers algaeroller = new AlgaeRollers();
     private final CoralRollers coralroller = new CoralRollers();
+    private final Climb climb = new Climb();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -122,11 +124,15 @@ public class RobotContainer {
         subjoystick.y().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l2));
         subjoystick.a().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l3));
         subjoystick.b().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l4));
+        subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.pull()));
+        subjoystick.povLeft().onFalse(new RunCommand(() -> climb.stop()));
+        subjoystick.povRight().whileTrue(new RunCommand(() -> climb.reset()));
+        subjoystick.povRight().onFalse(new RunCommand(() -> climb.stop()));
 
-        subjoystick.povUp().onTrue(elevator.disableElevatorPID());
-        subjoystick.povDown().onTrue(elevator.disableElevatorPID());
+        //subjoystick.povUp().onTrue(elevator.disableElevatorPID());
+        //subjoystick.povDown().onTrue(elevator.disableElevatorPID());
         subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.setMotor(ElevatorConstants.elevatorSpeed)));
-        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed + 0.1)));
+        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed)));
         subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
         subjoystick.povDown().onFalse(new RunCommand(() -> elevator.stopElevator()));
 
@@ -141,6 +147,10 @@ public class RobotContainer {
         subjoystick.leftBumper().onFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
         subjoystick.leftBumper().whileTrue(new RunCommand(() -> coralroller.preRoller()));
 
+        subjoystick.rightBumper().whileTrue(new RunCommand(() -> algaeroller.spinOut()));
+        subjoystick.rightBumper().onFalse(new RunCommand(() -> algaeroller.stopAlgaeRollers()));
+        subjoystick.leftBumper().onFalse(new RunCommand(() -> algaeroller.stopAlgaeRollers()));
+        subjoystick.leftBumper().whileTrue(new RunCommand(() -> algaeroller.spinIn()));
     }
 
     public void setSpeed(double spe){

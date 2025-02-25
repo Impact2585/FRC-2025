@@ -33,15 +33,15 @@ public class AlgaeRollers extends SubsystemBase {
     }
 
     public void spinIn() {
-        System.out.println("spinning");
+        //System.out.println("spinning");
         AlgaeRoller1.set(AlgaeRollersConstants.maxSpeed);
-        AlgaeRoller2.set(AlgaeRollersConstants.maxSpeed);
+        AlgaeRoller2.set(-AlgaeRollersConstants.maxSpeed);
     }
 
     public void spinOut(){
-        System.out.println("spinning out");
+        //System.out.println("spinning out");
         AlgaeRoller1.set(-AlgaeRollersConstants.maxSpeed);
-        AlgaeRoller2.set(-AlgaeRollersConstants.maxSpeed);
+        AlgaeRoller2.set(AlgaeRollersConstants.maxSpeed);
     }
 
     public void stopAlgaeRollers(){
