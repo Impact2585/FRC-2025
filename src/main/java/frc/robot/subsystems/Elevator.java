@@ -36,6 +36,8 @@ public class Elevator extends SubsystemBase {
     double status = 1.0;
     boolean locked = true;
 
+    double currentSetPoint = 0.0;
+
     public Elevator() {
         elevatorMotor1Config
             .inverted(true)
@@ -61,6 +63,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Elevator position", (elevatorEncoder1.getPosition()  + elevatorEncoder2.getPosition()) / 2.0);
         SmartDashboard.putNumber("Elevator effective power", ((elevatorMotor1.getAppliedOutput() + elevatorMotor2.getAppliedOutput()) / 2.0));
+        SmartDashboard.putNumber("Elevator setpoint", this.getSetPoint());
     }
 
     public void setMotor(double speed){
@@ -94,8 +97,13 @@ public class Elevator extends SubsystemBase {
 
     public Command elevatorToSetPoint(double elevatorSetPoint){
         elevatorPID.setSetpoint(elevatorSetPoint);
-        SmartDashboard.putNumber("Elevator setpoint", elevatorSetPoint);
+        elevatorPID.setTolerance(0.5);
+        currentSetPoint = elevatorSetPoint;
         return run(() -> setMotor(elevatorPID.calculate(getEncoderPos(), elevatorSetPoint)));
+    }
+
+    public double getSetPoint(){
+        return currentSetPoint;
     }
 
     public Command disableElevatorPID(){

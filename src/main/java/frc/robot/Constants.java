@@ -33,14 +33,14 @@ public final class Constants {
         public static final double elevatorLowStop = 0;
         public static final double elevatorHighStop = 120;
     
-        public static final double eP = 0.02;
-        public static final double eI = 0.01;
+        public static final double eP = 0.03;
+        public static final double eI = 0.015;
         public static final double eD = 0;
     
         //public static final double loweredPos = 0;
         public static final double l1 = 0;
         public static final double l2 = 5;
-        public static final double l3 = 15;
+        public static final double l3 = 13.7;
         public static final double l4 = 30.5;
         
       }
@@ -61,11 +61,11 @@ public final class Constants {
     
         public static final double chuteSpeed = .7;
         public static final double rollerSlowSpeed = 0.1;
-        public static final double rollerFastSpeed = 0.7;
+        public static final double rollerFastSpeed = 0.4;
       }
 
       public static final class ClimbConstants{
         public static final int climbMotorCanId = 13;
-        public static final double climbSpeed = 0.5;
+        public static final double climbSpeed = 1.0;
       }
 }

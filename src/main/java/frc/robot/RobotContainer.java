@@ -131,10 +131,13 @@ public class RobotContainer {
 
         //subjoystick.povUp().onTrue(elevator.disableElevatorPID());
         //subjoystick.povDown().onTrue(elevator.disableElevatorPID());
-        subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.setMotor(ElevatorConstants.elevatorSpeed)));
-        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed)));
-        subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
-        subjoystick.povDown().onFalse(new RunCommand(() -> elevator.stopElevator()));
+        subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(elevator.getSetPoint() + 0.3)));
+        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(elevator.getSetPoint() - 0.3)));
+
+        //subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.setMotor(ElevatorConstants.elevatorSpeed)));
+        //subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed)));
+        //subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
+        //subjoystick.povDown().onFalse(new RunCommand(() -> elevator.stopElevator()));
 
         joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(1.000)));
         joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.500)));
