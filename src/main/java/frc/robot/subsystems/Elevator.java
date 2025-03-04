@@ -41,7 +41,7 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         elevatorMotor1Config
             .inverted(true)
-            .idleMode(IdleMode.kBrake)
+            .idleMode(IdleMode.kCoast)
             .smartCurrentLimit(40);
 
         elevatorEncoder1.setPosition(0);
@@ -64,11 +64,17 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("Elevator position", (elevatorEncoder1.getPosition()  + elevatorEncoder2.getPosition()) / 2.0);
         SmartDashboard.putNumber("Elevator effective power", ((elevatorMotor1.getAppliedOutput() + elevatorMotor2.getAppliedOutput()) / 2.0));
         SmartDashboard.putNumber("Elevator setpoint", this.getSetPoint());
+        //System.out.println(currentSetPoint);
+        setMotor(elevatorPID.calculate(getEncoderPos(), currentSetPoint));
     }
 
     public void setMotor(double speed){
-        elevatorMotor1.set(speed);
+        //System.out.println(speed);
+        if(speed > 0.75) speed = 0.75;
+        if(speed < -0.35) speed = -0.35;
+        //elevatorMotor1.set(speed);
         elevatorMotor2.set(speed);
+        SmartDashboard.putNumber("Elevator target power", speed);
     }
 
     public double sign(double x){
@@ -95,11 +101,14 @@ public class Elevator extends SubsystemBase {
         return ((elevatorEncoder1.getPosition() + elevatorEncoder2.getPosition()) / 2.0);
     }
 
-    public Command elevatorToSetPoint(double elevatorSetPoint){
+    public void elevatorToSetPoint(double elevatorSetPoint){
         elevatorPID.setSetpoint(elevatorSetPoint);
-        elevatorPID.setTolerance(0.5);
+        System.out.println(currentSetPoint);
         currentSetPoint = elevatorSetPoint;
-        return run(() -> setMotor(elevatorPID.calculate(getEncoderPos(), elevatorSetPoint)));
+    }
+
+    public void manualChange(double dx){
+        elevatorToSetPoint(currentSetPoint + dx);
     }
 
     public double getSetPoint(){
@@ -107,6 +116,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public Command disableElevatorPID(){
+        System.out.println("PID Disabled!");
         return run(() -> elevatorPID.reset());
     }
 

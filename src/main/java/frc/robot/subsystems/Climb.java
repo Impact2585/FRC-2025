@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -9,6 +10,7 @@ import frc.robot.Constants.ClimbConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -17,7 +19,7 @@ public class Climb extends SubsystemBase {
     private SparkMaxConfig climbMotorConfig = new SparkMaxConfig();
     private SparkMax climbMotor = new SparkMax(ClimbConstants.climbMotorCanId, MotorType.kBrushless);
     //private SparkMax CoralRoller2 = new SparkMax(CoralRollersConstants.coralRoller1CanId, MotorType.kBrushless);
-
+    private RelativeEncoder climbEncoder = climbMotor.getEncoder(); 
     private double ClimbStatus;
 
     public Climb() {
@@ -34,11 +36,16 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        SmartDashboard.putNumber("Climb position", climbEncoder.getPosition());
     }
 
     public void pull(){
-        climbMotor.set(ClimbConstants.climbSpeed);   
+        // if(climbEncoder.getPosition() >= ClimbConstants.climbMax){
+        //     climbMotor.set(0);
+        // } else {
+        //     climbMotor.set(ClimbConstants.climbSpeed);
+        // }
+        climbMotor.set(ClimbConstants.climbSpeed);
     }
 
     public void stop(){

@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.ElevatorPID;
+import frc.robot.commands.ElevatorManual;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,7 +34,6 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private double speedLimiter = 0.5;
-    private double curSetPoint = 0.0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -66,8 +66,8 @@ public class RobotContainer {
         // register commands to pathplanner
         // NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
         // NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
-        NamedCommands.registerCommand("elevatorL4", elevator.elevatorToSetPoint(ElevatorConstants.l4));
-        NamedCommands.registerCommand("elevatorL1", elevator.elevatorToSetPoint(ElevatorConstants.l1));
+        NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
+        NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
         NamedCommands.registerCommand("scoreOut", new RunCommand(() -> coralroller.scoreOut()));
         NamedCommands.registerCommand("preRoller", new RunCommand(() -> coralroller.preRoller()));
         NamedCommands.registerCommand("stopCoralRollers", new RunCommand(() -> coralroller.preRoller()));
@@ -115,15 +115,17 @@ public class RobotContainer {
         */
         
         //elevator coral presets
-        // subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
-        // subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
-        // subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
-        // subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
+        //subjoystick.x().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l1)));
+        //subjoystick.y().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l2)));
+        //subjoystick.a().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l3)));
+        //subjoystick.b().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l4)));
+        subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
+        subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
+        subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
+        subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
+        joystick.leftBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3_5));
+        joystick.rightBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2_5));
 
-        subjoystick.x().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l1));
-        subjoystick.y().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l2));
-        subjoystick.a().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l3));
-        subjoystick.b().onTrue(elevator.elevatorToSetPoint(ElevatorConstants.l4));
         subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.pull()));
         subjoystick.povLeft().onFalse(new RunCommand(() -> climb.stop()));
         subjoystick.povRight().whileTrue(new RunCommand(() -> climb.reset()));
@@ -131,13 +133,14 @@ public class RobotContainer {
 
         //subjoystick.povUp().onTrue(elevator.disableElevatorPID());
         //subjoystick.povDown().onTrue(elevator.disableElevatorPID());
-        subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(elevator.getSetPoint() + 0.3)));
-        subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(elevator.getSetPoint() - 0.3)));
 
-        //subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.setMotor(ElevatorConstants.elevatorSpeed)));
-        //subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.setMotor(-ElevatorConstants.elevatorSpeed)));
-        //subjoystick.povUp().onFalse(new RunCommand(() -> elevator.stopElevator()));
-        //subjoystick.povDown().onFalse(new RunCommand(() -> elevator.stopElevator()));
+        //subjoystick.povUp().whileTrue(new RunCommand(() -> elevator.manualChange(0.07)));
+        //subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.manualChange(-0.07)));
+
+        subjoystick.povUp().whileTrue(new ElevatorManual(elevator, ElevatorConstants.elevatorSpeed + 0.05));
+        subjoystick.povUp().onFalse(new ElevatorManual(elevator, 0.0));
+        subjoystick.povDown().whileTrue(new ElevatorManual(elevator, -ElevatorConstants.elevatorSpeed + 0.05));
+        subjoystick.povDown().onFalse(new ElevatorManual(elevator, 0.0));
 
         joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(1.000)));
         joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.500)));
@@ -164,23 +167,8 @@ public class RobotContainer {
         if(spe == 1.0) SmartDashboard.putString("Swerve Speed", "HIGH");
     }
 
-    public void IncSpeed(){
-        if (speedLimiter < 1.0){
-            speedLimiter += 0.1;
-            SmartDashboard.putNumber("Swerve Speed", speedLimiter);
-        }
-    }
-
-    public void DecSpeed(){
-        if (speedLimiter > 0.1){
-            speedLimiter -= 0.1;
-            SmartDashboard.putNumber("Swerve Speed", speedLimiter);
-        }
-    }
-
     public void setElevator(double sp){
-        curSetPoint = sp;
-        SmartDashboard.putNumber("Elevator Setpoint", curSetPoint);
+        //SmartDashboard.putNumber("Elevator Setpoint", curSetPoint);
         elevator.elevatorToSetPoint(sp);
         // new ElevatorPID(elevator, sp);
     }

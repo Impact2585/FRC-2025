@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Pose3d;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -25,24 +26,24 @@ public final class Constants {
     public static final class ElevatorConstants{
         public static final int elevator1CanID = 41;
         public static final int elevator2CanID = 42;
-        public static final int rollerCanID = 31;
     
         public static final double rollerSpeed = 0.5;
-        public static final double elevatorSpeed = 0.15;
+        public static final double elevatorSpeed = 0.2;
     
         public static final double elevatorLowStop = 0;
         public static final double elevatorHighStop = 120;
     
         public static final double eP = 0.03;
-        public static final double eI = 0.015;
+        public static final double eI = 0.005;
         public static final double eD = 0;
-    
+
         //public static final double loweredPos = 0;
         public static final double l1 = 0;
         public static final double l2 = 5;
         public static final double l3 = 13.7;
-        public static final double l4 = 30.5;
-        
+        public static final double l4 = 30;
+        public static final double l3_5 = 22.5;
+        public static final double l2_5 = 10.0;
       }
 
       public static final class AlgaeRollersConstants{
@@ -67,5 +68,9 @@ public final class Constants {
       public static final class ClimbConstants{
         public static final int climbMotorCanId = 13;
         public static final double climbSpeed = 1.0;
+        public static final double climbMax = 15.0;
+      }
+      public static final class VisionConstants{
+        public static final Pose3d robotToCamera = new Pose3d();
       }
 }
