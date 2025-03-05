@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.ElevatorPID;
+import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
@@ -91,6 +92,8 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+
+        // joystick.y().whileTrue(new ChaseTagCommand(drivetrain, null));
 
         /*
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->

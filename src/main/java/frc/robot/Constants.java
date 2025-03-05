@@ -39,11 +39,11 @@ public final class Constants {
 
         //public static final double loweredPos = 0;
         public static final double l1 = 0;
-        public static final double l2 = 5;
-        public static final double l3 = 13.7;
-        public static final double l4 = 30;
-        public static final double l3_5 = 22.5;
-        public static final double l2_5 = 10.0;
+        public static final double l2 = 5.2;
+        public static final double l3 = 15.15;
+        public static final double l4 = 31.1;
+        public static final double l3_5 = 22.6;
+        public static final double l2_5 = 12.25;
       }
 
       public static final class AlgaeRollersConstants{
@@ -62,7 +62,7 @@ public final class Constants {
     
         public static final double chuteSpeed = .7;
         public static final double rollerSlowSpeed = 0.1;
-        public static final double rollerFastSpeed = 0.4;
+        public static final double rollerFastSpeed = 0.3;
       }
 
       public static final class ClimbConstants{

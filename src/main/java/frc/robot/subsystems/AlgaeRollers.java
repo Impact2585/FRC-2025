@@ -6,6 +6,8 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.AlgaeRollersConstants;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -20,6 +22,7 @@ public class AlgaeRollers extends SubsystemBase {
 
     public AlgaeRollers() {
         algaerollersconfig
+            .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(20);
         stopAlgaeRollers();
 
