@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.ElevatorPID;
+import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.AlignToTagRotation;
 //import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ElevatorManual;
@@ -130,7 +131,8 @@ public class RobotContainer {
         subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
         joystick.leftBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3_5));
         joystick.rightBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2_5));
-        joystick.leftStick().onTrue(new AlignToTagRotation(drivetrain));
+        
+        joystick.leftStick().onTrue(new AlignToReefTagRelative(drivetrain));
 
         subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.pull()));
         subjoystick.povLeft().onFalse(new RunCommand(() -> climb.stop()));

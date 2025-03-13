@@ -94,7 +94,7 @@ public class AlignToTagRotation extends Command {
             // This is new target data, so recalculate the goal
             double[] targetPoseArray = table.getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
             Pose3d targetPose = new Pose3d(targetPoseArray[0], targetPoseArray[1], targetPoseArray[2],
-                                        new Rotation3d(targetPoseArray[3], targetPoseArray[4], targetPoseArray[6]));
+                                        new Rotation3d(targetPoseArray[3], targetPoseArray[4], targetPoseArray[5]));
             // Transform the tag's pose to set our goal
             var goalPose = targetPose.transformBy(TAG_TO_GOAL).toPose2d();
 
@@ -119,6 +119,7 @@ public class AlignToTagRotation extends Command {
             if (xController.atGoal()) {
                 xSpeed = 0;
             }
+
             double ySpeed = yController.calculate(robotPose.getY());
             if (yController.atGoal()) {
                 ySpeed = 0;
@@ -134,8 +135,12 @@ public class AlignToTagRotation extends Command {
             //         .withVelocityY(ySpeed * speedLimiter) // Drive left with negative X (left)
             //         .withRotationalRate(omegaSpeed * speedLimiter) // Drive counterclockwise with negative X (left)
             // )
-            System.out.println("xSpeed: "+ xSpeed+"\nySpeed: "+ySpeed +"\nrotation: " + omegaSpeed);
+            SmartDashboard.putNumber("Pose X", robotPose.getX());
+            SmartDashboard.putNumber("Pose Y", robotPose.getY());
+            SmartDashboard.putNumber("Pose Angle", robotPose2d.getRotation().getRadians());
         }
+
+
     }
 
 
