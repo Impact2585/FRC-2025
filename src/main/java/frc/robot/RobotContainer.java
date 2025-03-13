@@ -13,7 +13,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.ElevatorPID;
-import frc.robot.commands.ChaseTagCommand;
+import frc.robot.commands.AlignToTagRotation;
+//import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
@@ -31,6 +32,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Climb;
 
+import edu.wpi.first.cameraserver.CameraServer;
+
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -38,12 +41,12 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.02).withRotationalDeadband(MaxAngularRate * 0.02) // Add a 2% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            .withDeadband(MaxSpeed * 0.02).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 2% deadband
+            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(DriveRequestType.Velocity);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -58,11 +61,10 @@ public class RobotContainer {
     private final Climb climb = new Climb();
 
     /* Path follower */
-    private final SendableChooser<Command> autoChooser;
+    private SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        CameraServer.startAutomaticCapture();
 
         // register commands to pathplanner
         // NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
@@ -72,6 +74,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("scoreOut", new RunCommand(() -> coralroller.scoreOut()));
         NamedCommands.registerCommand("preRoller", new RunCommand(() -> coralroller.preRoller()));
         NamedCommands.registerCommand("stopCoralRollers", new RunCommand(() -> coralroller.preRoller()));
+
+        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        SmartDashboard.putData("Auto Mode", autoChooser);
 
         configureBindings();
     }
@@ -84,14 +89,11 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(joystick.getLeftY() * MaxSpeed * speedLimiter) // Drive forward with negative Y (forward)
                     .withVelocityY(joystick.getLeftX() * MaxSpeed * speedLimiter) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * speedLimiter) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * speedLimiter * 1.5) // Drive counterclockwise with negative X (left)
             )
         );
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
 
         // joystick.y().whileTrue(new ChaseTagCommand(drivetrain, null));
 
@@ -128,12 +130,13 @@ public class RobotContainer {
         subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
         joystick.leftBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3_5));
         joystick.rightBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2_5));
+        joystick.leftStick().onTrue(new AlignToTagRotation(drivetrain));
 
         subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.pull()));
         subjoystick.povLeft().onFalse(new RunCommand(() -> climb.stop()));
         subjoystick.povRight().whileTrue(new RunCommand(() -> climb.reset()));
         subjoystick.povRight().onFalse(new RunCommand(() -> climb.stop()));
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
         //subjoystick.povUp().onTrue(elevator.disableElevatorPID());
         //subjoystick.povDown().onTrue(elevator.disableElevatorPID());
 
