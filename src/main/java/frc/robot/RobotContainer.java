@@ -14,7 +14,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.AlignToReefTagRelative;
-import frc.robot.commands.AlignToTagRotation;
 //import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.Constants.ElevatorConstants;
@@ -150,10 +149,10 @@ public class RobotContainer {
         subjoystick.povDown().whileTrue(new ElevatorManual(elevator, -ElevatorConstants.elevatorSpeed + 0.05));
         subjoystick.povDown().onFalse(new ElevatorManual(elevator, 0.0));
 
-        joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(1.000)));
-        joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.500)));
+        joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(0.700)));
+        joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.400)));
         joystick.povLeft().whileTrue(new RunCommand(() -> this.setSpeed(0.200)));
-        joystick.povDown().whileTrue(new RunCommand(() -> this.setSpeed(0.066)));
+        joystick.povDown().whileTrue(new RunCommand(() -> this.setSpeed(0.1)));
         
         //rollers for subsystems
         subjoystick.rightBumper().whileTrue(new RunCommand(() -> coralroller.scoreOut()));

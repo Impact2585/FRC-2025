@@ -13,17 +13,20 @@ import com.revrobotics.spark.SparkAbsoluteEncoder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
-public class ElevatorPID extends Command {
+public class ElevatorPIDAuto extends Command {
     private Elevator elevatorSubsystem;
     private PIDController elevatorPID;
+    private Timer endTimer;
 
-    public ElevatorPID(Elevator elevatorSubsystem, double setpoint) {
+    public ElevatorPIDAuto(Elevator elevatorSubsystem, double setpoint) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.elevatorPID = new PIDController(//
                 ElevatorConstants.eP, ElevatorConstants.eI, ElevatorConstants.eD);
@@ -35,6 +38,8 @@ public class ElevatorPID extends Command {
 
     @Override
     public void initialize() {
+        this.endTimer = new Timer();
+        this.endTimer.start();
         elevatorPID.reset();
     }
 
@@ -52,6 +57,6 @@ public class ElevatorPID extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return endTimer.hasElapsed(3);
     }
 }

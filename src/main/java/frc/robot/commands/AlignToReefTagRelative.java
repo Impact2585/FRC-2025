@@ -49,7 +49,7 @@ public class AlignToReefTagRelative extends Command {
     xController.setSetpoint(Constants.X_SETPOINT_REEF_ALIGNMENT);
     xController.setTolerance(Constants.X_TOLERANCE_REEF_ALIGNMENT);
 
-    yController.setSetpoint(0);
+    yController.setSetpoint(Constants.Y_SETPOINT_REEF_ALIGNMENT);
     yController.setTolerance(Constants.Y_TOLERANCE_REEF_ALIGNMENT);
 
     tagID = LimelightHelpers.getFiducialID("");
@@ -67,7 +67,7 @@ public class AlignToReefTagRelative extends Command {
 
         double xSpeed = xController.calculate(postions[2]);
         double ySpeed = -yController.calculate(postions[0]);
-        double rotValue = -rotController.calculate(postions[4]);
+        double rotValue = rotController.calculate(postions[4]);
 
         //drivebase.drive(new Translation2d(xSpeed, ySpeed), rotValue, false);
 
@@ -100,6 +100,6 @@ public class AlignToReefTagRelative extends Command {
   public boolean isFinished() {
     // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
     return (this.dontSeeTagTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME) ||
-        this.stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME)) || this.idleTimer.hasElapsed(3);
+        this.stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME)) || this.idleTimer.hasElapsed(1.5);
   }
 }
