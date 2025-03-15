@@ -24,13 +24,15 @@ public class AlignToReefTagRelative extends Command {
     private CommandSwerveDrivetrain m_drivetrain;
     private final SwerveRequest.RobotCentric m_drive = new SwerveRequest.RobotCentric();
     private double tagID = -1;
+    private boolean goL4;
     
 
-  public AlignToReefTagRelative(CommandSwerveDrivetrain m_drivetrain) {
+  public AlignToReefTagRelative(CommandSwerveDrivetrain m_drivetrain, boolean isL4) {
     xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
     yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
     rotController = new PIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
     this.m_drivetrain = m_drivetrain;
+    this.goL4 = isL4;
     addRequirements(m_drivetrain);
   }
 
@@ -46,7 +48,8 @@ public class AlignToReefTagRelative extends Command {
     rotController.setSetpoint(Constants.ROT_SETPOINT_REEF_ALIGNMENT);
     rotController.setTolerance(Constants.ROT_TOLERANCE_REEF_ALIGNMENT);
 
-    xController.setSetpoint(Constants.X_SETPOINT_REEF_ALIGNMENT);
+    if(goL4) xController.setSetpoint(Constants.X_SETPOINT_REEF_ALIGNMENT_L4);
+    else xController.setSetpoint(Constants.X_SETPOINT_REEF_ALIGNMENT);
     xController.setTolerance(Constants.X_TOLERANCE_REEF_ALIGNMENT);
 
     yController.setSetpoint(Constants.Y_SETPOINT_REEF_ALIGNMENT);
@@ -93,7 +96,10 @@ public class AlignToReefTagRelative extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    //drivebase.drive(new Translation2d(), 0, false);
+    m_drivetrain.setControl(m_drive
+        .withVelocityX(0) // Drive forward with negative Y(forward)
+        .withVelocityY(0) // Drive left with negative X (left)
+        .withRotationalRate(0));
   }
 
   @Override

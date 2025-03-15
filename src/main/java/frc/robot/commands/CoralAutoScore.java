@@ -4,7 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.ElevatorConstants;
 
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.CoralRollers;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -21,43 +21,34 @@ import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
-public class ElevatorPIDAuto extends Command {
-    private Elevator elevatorSubsystem;
+public class CoralAutoScore extends Command {
+    private CoralRollers coralRollers;
     private PIDController elevatorPID;
     private Timer endTimer;
-    private double setPoint;
 
-    public ElevatorPIDAuto(Elevator elevatorSubsystem, double setpoint) {
-        this.elevatorSubsystem = elevatorSubsystem;
-        this.elevatorPID = new PIDController(//
-                ElevatorConstants.eP, ElevatorConstants.eI, ElevatorConstants.eD);
-        this.elevatorPID.setTolerance(1);
-        elevatorPID.setSetpoint(setpoint);
-
-        addRequirements(elevatorSubsystem);
+    public CoralAutoScore(CoralRollers coralRollers) {
+        this.coralRollers = coralRollers;
+        addRequirements(coralRollers);
     }
 
     @Override
     public void initialize() {
         this.endTimer = new Timer();
         this.endTimer.start();
-        elevatorPID.reset();
     }
 
     @Override
     public void execute() {
-        double speed = elevatorPID.calculate(elevatorSubsystem.getEncoderPos(), elevatorPID.getSetpoint());
-        elevatorSubsystem.setMotor(speed);
-        SmartDashboard.putNumber("Elevator setpoint", elevatorPID.getSetpoint());
+        coralRollers.preRoller();
     }
 
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.setMotor(0);
+    
     }
 
     @Override
     public boolean isFinished() {
-        return endTimer.get() > 1.5;
+        return endTimer.hasElapsed(1);
     }
 }

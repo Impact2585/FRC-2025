@@ -65,7 +65,7 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("Elevator effective power", ((elevatorMotor1.getAppliedOutput() + elevatorMotor2.getAppliedOutput()) / 2.0));
         SmartDashboard.putNumber("Elevator setpoint", this.getSetPoint());
         //System.out.println(currentSetPoint);
-        setMotor(elevatorPID.calculate(getEncoderPos(), currentSetPoint));
+        //setMotor(elevatorPID.calculate(getEncoderPos(), currentSetPoint));
     }
 
     public void setMotor(double speed){

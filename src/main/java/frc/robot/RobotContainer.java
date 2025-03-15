@@ -13,7 +13,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.ElevatorPID;
+import frc.robot.commands.ElevatorPIDAuto;
 import frc.robot.commands.AlignToReefTagRelative;
+import frc.robot.commands.CoralAutoScore;
+import frc.robot.commands.CoralAutoStop;
 //import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.Constants.ElevatorConstants;
@@ -38,6 +41,7 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private double speedLimiter = 0.5;
+    private double directionFlipper = 1.0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -67,13 +71,15 @@ public class RobotContainer {
         CameraServer.startAutomaticCapture();
 
         // register commands to pathplanner
-        // NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
+        //NamedCommands.registerCommand("elevatorL4", new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l4)));
+        //NamedCommands.registerCommand("elevatorL1", new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l1)));
         // NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
-        NamedCommands.registerCommand("elevatorL4", new ElevatorPID(elevator, ElevatorConstants.l4));
-        NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
-        NamedCommands.registerCommand("scoreOut", new RunCommand(() -> coralroller.scoreOut()));
+        NamedCommands.registerCommand("elevatorL4", new ElevatorPIDAuto(elevator, ElevatorConstants.l4));
+        NamedCommands.registerCommand("elevatorL1", new ElevatorPIDAuto(elevator, ElevatorConstants.l1));
+        NamedCommands.registerCommand("AlignReef", new AlignToReefTagRelative(drivetrain, true));
+        NamedCommands.registerCommand("scoreOut", new CoralAutoScore(coralroller));
         NamedCommands.registerCommand("preRoller", new RunCommand(() -> coralroller.preRoller()));
-        NamedCommands.registerCommand("stopCoralRollers", new RunCommand(() -> coralroller.preRoller()));
+        NamedCommands.registerCommand("stopCoralRollers", new CoralAutoStop(coralroller));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -87,13 +93,16 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(joystick.getLeftY() * MaxSpeed * speedLimiter) // Drive forward with negative Y (forward)
-                    .withVelocityY(joystick.getLeftX() * MaxSpeed * speedLimiter) // Drive left with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * speedLimiter * directionFlipper) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * speedLimiter * directionFlipper) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate * speedLimiter * 1.5) // Drive counterclockwise with negative X (left)
             )
         );
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+
+        joystick.b().whileTrue(new RunCommand(() -> this.flipDirection(1.0)));
+        joystick.y().whileTrue(new RunCommand(() -> this.flipDirection(-1.0)));
 
         // joystick.y().whileTrue(new ChaseTagCommand(drivetrain, null));
 
@@ -120,10 +129,12 @@ public class RobotContainer {
         */
         
         //elevator coral presets
-        //subjoystick.x().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l1)));
-        //subjoystick.y().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l2)));
-        //subjoystick.a().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l3)));
-        //subjoystick.b().onTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l4)));
+        //subjoystick.x().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l1)));
+        //subjoystick.y().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l2)));
+        //subjoystick.a().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l3)));
+        //subjoystick.b().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l4)));
+        //joystick.leftBumper().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l3_5)));
+        //joystick.rightBumper().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l2_5)));
         subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
         subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
         subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
@@ -131,7 +142,8 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3_5));
         joystick.rightBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2_5));
         
-        joystick.leftStick().onTrue(new AlignToReefTagRelative(drivetrain));
+        subjoystick.leftStick().onTrue(new AlignToReefTagRelative(drivetrain, true));
+        subjoystick.rightStick().onTrue(new AlignToReefTagRelative(drivetrain, false));
 
         subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.pull()));
         subjoystick.povLeft().onFalse(new RunCommand(() -> climb.stop()));
@@ -172,6 +184,10 @@ public class RobotContainer {
         if(spe == 0.2) SmartDashboard.putString("Swerve Speed", "LOW");
         if(spe == 0.5) SmartDashboard.putString("Swerve Speed", "MID");
         if(spe == 1.0) SmartDashboard.putString("Swerve Speed", "HIGH");
+    }
+
+    public void flipDirection(double newDir){
+        this.directionFlipper = newDir;
     }
 
     public void setElevator(double sp){
