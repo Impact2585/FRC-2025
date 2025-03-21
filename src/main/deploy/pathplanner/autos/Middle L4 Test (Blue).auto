@@ -33,6 +33,12 @@
           "data": {
             "name": "scoreOut"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go Backwards Middle"
+          }
         }
       ]
     }

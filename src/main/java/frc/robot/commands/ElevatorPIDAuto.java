@@ -53,7 +53,7 @@ public class ElevatorPIDAuto extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.setMotor(0);
+        elevatorSubsystem.setMotor(0.07);
     }
 
     @Override

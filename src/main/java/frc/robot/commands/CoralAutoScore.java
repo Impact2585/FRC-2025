@@ -39,7 +39,7 @@ public class CoralAutoScore extends Command {
 
     @Override
     public void execute() {
-        coralRollers.preRoller();
+        coralRollers.scoreOut();
     }
 
     @Override

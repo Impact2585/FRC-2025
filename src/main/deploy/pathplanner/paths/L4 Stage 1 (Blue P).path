@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.185227272727272,
-        "y": 2.823
+        "x": 5.215142045454546,
+        "y": 2.8134517045454537
       },
       "prevControl": {
-        "x": 5.6222435276369165,
-        "y": 2.1703161311382977
+        "x": 5.65215830036419,
+        "y": 2.1607678356837514
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "First L4 Blue P"
     }
   ],
   "rotationTargets": [],

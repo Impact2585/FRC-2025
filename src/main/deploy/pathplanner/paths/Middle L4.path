@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.913153409090909,
+        "x": 5.8632954545454545,
         "y": 4.029985795454545
       },
       "prevControl": {
-        "x": 6.451619318181818,
+        "x": 6.401761363636363,
         "y": 4.010042613636363
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "First L4 Blue Middle"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.75463573323157
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,

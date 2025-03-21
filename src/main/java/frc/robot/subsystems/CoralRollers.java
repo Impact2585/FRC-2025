@@ -47,10 +47,17 @@ public class CoralRollers extends SubsystemBase {
         CoralRoller2.set(-CoralRollersConstants.rollerSlowSpeed);
     }
 
+
+
     public void scoreOut(){
         //System.out.println("rolling");
         CoralRoller1.set(CoralRollersConstants.rollerFastSpeed);
         CoralRoller2.set(-CoralRollersConstants.rollerFastSpeed);
+    }
+
+    public void rollBack(){
+        CoralRoller1.set(CoralRollersConstants.rollerBack);
+        CoralRoller2.set(-CoralRollersConstants.rollerBack);
     }
 
     public void stopCoralRollers(){

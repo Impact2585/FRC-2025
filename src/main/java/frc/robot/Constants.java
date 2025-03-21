@@ -34,16 +34,16 @@ public final class Constants {
         public static final double elevatorLowStop = 0;
         public static final double elevatorHighStop = 120;
     
-        public static final double eP = 0.07;
-        public static final double eI = 0.005;
+        public static final double eP = 0.05;
+        public static final double eI = 0.003;
         public static final double eD = 0;
 
         //public static final double loweredPos = 0;
-        public static final double l1 = -0.2;
-        public static final double l2 = 6;
-        public static final double l3 = 16.5;
-        public static final double l4 = 31;
-        public static final double l3_5 = 25.0;
+        public static final double l1 = -0.5;
+        public static final double l2 = 6.3;
+        public static final double l3 = 17;
+        public static final double l4 = 31.8;
+        public static final double l3_5 = 24.5;
         public static final double l2_5 = 15.5;
       }
 
@@ -51,7 +51,7 @@ public final class Constants {
         public static final int lowerAlgaeRollersMotorCanId = 31;
         public static final int upperAlgaeRollersMotorCanId = 32;
     
-        public static final double maxSpeed = 0.75;
+        public static final double maxSpeed = 0.6;
       }
 
       public static final class CoralRollersConstants{
@@ -62,8 +62,9 @@ public final class Constants {
         public static final int coralRoller2CanId = 22;
     
         public static final double chuteSpeed = .7;
-        public static final double rollerSlowSpeed = 0.18;
-        public static final double rollerFastSpeed = 0.3;
+        public static final double rollerSlowSpeed = 0.225;
+        public static final double rollerFastSpeed = 0.5;
+        public static final double rollerBack = -0.2;
       }
 
       public static final class ClimbConstants{
@@ -80,13 +81,13 @@ public final class Constants {
       public static final double Y_REEF_ALIGNMENT_P = 3;
       public static final double ROT_REEF_ALIGNMENT_P = 0.1625;
     
-      public static final double ROT_SETPOINT_REEF_ALIGNMENT = 1;  // Rotation
+      public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0.25;  // Rotation
       public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0.25;
-      public static final double X_SETPOINT_REEF_ALIGNMENT_L4 = -0.20;  // Vertical 
-      public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
+      public static final double X_SETPOINT_REEF_ALIGNMENT_L4 = -0.26;  // Vertical 
+      public static final double X_SETPOINT_REEF_ALIGNMENT = -0.20;
       public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.005;
-      public static final double Y_SETPOINT_REEF_ALIGNMENT = -0.01;  // Horizontal pose
-      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.005;
+      public static final double Y_SETPOINT_REEF_ALIGNMENT = -0.005;  // Horizontal pose
+      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.0025;
     
       public static final double DONT_SEE_TAG_WAIT_TIME = 0.5;
       public static final double POSE_VALIDATION_TIME = 1.0;

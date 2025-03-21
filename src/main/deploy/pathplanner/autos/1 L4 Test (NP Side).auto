@@ -19,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.1
           }
         },
         {
@@ -32,6 +32,18 @@
           "type": "named",
           "data": {
             "name": "scoreOut"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go Backwards NP"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL1"
           }
         }
       ]

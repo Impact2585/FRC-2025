@@ -70,7 +70,7 @@ public class Elevator extends SubsystemBase {
 
     public void setMotor(double speed){
         //System.out.println(speed);
-        if(speed > 0.75) speed = 0.75;
+        if(speed > 0.8) speed = 0.8;
         if(speed < -0.35) speed = -0.35;
         //elevatorMotor1.set(speed);
         elevatorMotor2.set(speed);
@@ -93,8 +93,8 @@ public class Elevator extends SubsystemBase {
     }
     
     public void stopElevator(){
-        elevatorMotor1.set(0);
-        elevatorMotor2.set(0);
+        elevatorMotor1.set(0.1);
+        elevatorMotor2.set(0.1);
     }
 
     public double getEncoderPos() {
