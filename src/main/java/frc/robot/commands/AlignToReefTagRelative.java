@@ -89,6 +89,7 @@ public class AlignToReefTagRelative extends Command {
         .withVelocityX(0) // Drive forward with negative Y(forward)
         .withVelocityY(0) // Drive left with negative X (left)
         .withRotationalRate(0));
+        //System.out.println("No target detected");
     }
 
     SmartDashboard.putNumber("poseValidTimer", stopTimer.get());

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L4 Stage 1 (Blue NP)"
+            "pathName": "L4 Stage 1 (Blue P)"
           }
         },
         {
@@ -35,7 +35,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L4 Stage 2 (Blue NP)"
+                  "pathName": "L4 Stage 2 (Blue P)"
                 }
               },
               {
@@ -56,7 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L4 Stage 3 (Blue NP)"
+            "pathName": "L4 Stage 3 (Blue P)"
           }
         },
         {

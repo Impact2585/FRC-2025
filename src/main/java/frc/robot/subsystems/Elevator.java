@@ -42,7 +42,7 @@ public class Elevator extends SubsystemBase {
         elevatorMotor1Config
             .inverted(true)
             .idleMode(IdleMode.kCoast)
-            .smartCurrentLimit(40);
+            .smartCurrentLimit(40).openLoopRampRate(1);
 
         elevatorEncoder1.setPosition(0);
         elevatorEncoder2.setPosition(0);
@@ -51,7 +51,7 @@ public class Elevator extends SubsystemBase {
         elevatorMotor2Config
             .inverted(true)
             .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(40);
+            .smartCurrentLimit(40).openLoopRampRate(1);
 
         elevatorMotor1.configure(elevatorMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         elevatorMotor2.configure(elevatorMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -70,9 +70,9 @@ public class Elevator extends SubsystemBase {
 
     public void setMotor(double speed){
         //System.out.println(speed);
-        if(speed > 0.8) speed = 0.8;
-        if(speed < -0.35) speed = -0.35;
-        //elevatorMotor1.set(speed);
+        if(speed > 0.6) speed = 0.8;
+        if(speed < -0.4) speed = -0.4;
+        elevatorMotor1.set(speed);
         elevatorMotor2.set(speed);
         SmartDashboard.putNumber("Elevator target power", speed);
     }
@@ -93,8 +93,8 @@ public class Elevator extends SubsystemBase {
     }
     
     public void stopElevator(){
-        elevatorMotor1.set(0.1);
-        elevatorMotor2.set(0.1);
+        elevatorMotor1.set(0.05);
+        elevatorMotor2.set(0.05);
     }
 
     public double getEncoderPos() {
@@ -135,5 +135,10 @@ public class Elevator extends SubsystemBase {
 
     public void stopAll(){
 
+    }
+
+    public void zero(){
+        elevatorEncoder1.setPosition(0.0);
+        elevatorEncoder2.setPosition(0.0);
     }
 }

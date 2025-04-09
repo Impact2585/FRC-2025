@@ -4,7 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.ElevatorConstants;
 
-import frc.robot.subsystems.CoralRollers;
+import frc.robot.subsystems.Elevator;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -21,34 +21,43 @@ import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
-public class CoralAutoScore extends Command {
-    private CoralRollers coralRollers;
+public class ElevatorPIDAutoL1 extends Command {
+    private Elevator elevatorSubsystem;
     private PIDController elevatorPID;
     private Timer endTimer;
+    private double setPoint;
 
-    public CoralAutoScore(CoralRollers coralRollers) {
-        this.coralRollers = coralRollers;
-        addRequirements(coralRollers);
+    public ElevatorPIDAutoL1(Elevator elevatorSubsystem, double setpoint) {
+        this.elevatorSubsystem = elevatorSubsystem;
+        this.elevatorPID = new PIDController(//
+                ElevatorConstants.eP, ElevatorConstants.eI, ElevatorConstants.eD);
+        this.elevatorPID.setTolerance(1);
+        elevatorPID.setSetpoint(setpoint);
+
+        addRequirements(elevatorSubsystem);
     }
 
     @Override
     public void initialize() {
         this.endTimer = new Timer();
         this.endTimer.start();
+        elevatorPID.reset();
     }
 
     @Override
     public void execute() {
-        coralRollers.autoCoral();
+        double speed = elevatorPID.calculate(elevatorSubsystem.getEncoderPos(), elevatorPID.getSetpoint());
+        elevatorSubsystem.setMotor(speed);
+        SmartDashboard.putNumber("Elevator setpoint", elevatorPID.getSetpoint());
     }
 
     @Override
     public void end(boolean interrupted) {
-        coralRollers.stopCoralRollers();
+        elevatorSubsystem.setMotor(0.0);
     }
 
     @Override
     public boolean isFinished() {
-        return endTimer.hasElapsed(1);
+        return endTimer.get() > 1.5;
     }
 }

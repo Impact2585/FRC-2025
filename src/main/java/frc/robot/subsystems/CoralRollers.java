@@ -22,6 +22,8 @@ public class CoralRollers extends SubsystemBase {
 
     private double CoralRollersStatus;
 
+    private double status = 0;
+
     public CoralRollers() {
         coralRollerMotorConfig
             .inverted(true)
@@ -47,10 +49,8 @@ public class CoralRollers extends SubsystemBase {
         CoralRoller2.set(-CoralRollersConstants.rollerSlowSpeed);
     }
 
-
-
     public void scoreOut(){
-        //System.out.println("rolling");
+        System.out.println("rolling");
         CoralRoller1.set(CoralRollersConstants.rollerFastSpeed);
         CoralRoller2.set(-CoralRollersConstants.rollerFastSpeed);
     }
@@ -61,9 +61,20 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void stopCoralRollers(){
+        System.out.println("stopping");
         CoralRoller1.set(0);
         CoralRoller2.set(0);
         //ChuteMotor1.set(0);
         //ChuteMotor2.set(0);
+    }
+
+    public void autoCoral(){
+        CoralRoller1.set(0.18);
+        CoralRoller2.set(-0.18);
+    }
+
+    public void autoCoralFast(){
+        CoralRoller1.set(0.25);
+        CoralRoller2.set(-0.25);  
     }
 }

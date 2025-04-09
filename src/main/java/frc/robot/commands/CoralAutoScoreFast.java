@@ -21,12 +21,12 @@ import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
-public class CoralAutoScore extends Command {
+public class CoralAutoScoreFast extends Command {
     private CoralRollers coralRollers;
     private PIDController elevatorPID;
     private Timer endTimer;
 
-    public CoralAutoScore(CoralRollers coralRollers) {
+    public CoralAutoScoreFast(CoralRollers coralRollers) {
         this.coralRollers = coralRollers;
         addRequirements(coralRollers);
     }
@@ -39,7 +39,7 @@ public class CoralAutoScore extends Command {
 
     @Override
     public void execute() {
-        coralRollers.autoCoral();
+        coralRollers.autoCoralFast();
     }
 
     @Override

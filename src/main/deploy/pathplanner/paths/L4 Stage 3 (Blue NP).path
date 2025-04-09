@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.16528409090909,
-        "y": 2.4843892045454536
+        "x": 0.5284943181818181,
+        "y": 7.450241477272727
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.29028409090909,
-        "y": 2.267882853599344
+        "x": 1.5555681818181817,
+        "y": 6.772173295454546
       },
       "isLocked": false,
-      "linkedName": "First L4 P"
+      "linkedName": "Source Visit Blue Upper"
     },
     {
       "anchor": {
-        "x": 5.16528409090909,
-        "y": 2.4843892045454536
+        "x": 3.3903409090909093,
+        "y": 5.73512784090909
       },
       "prevControl": {
-        "x": 5.04028409090909,
-        "y": 2.7008955554915635
+        "x": 2.891761363636364,
+        "y": 6.51291193181818
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "First L4 P"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -58.10920819815426
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -50.964
   },
   "useDefaultConstraints": true
 }

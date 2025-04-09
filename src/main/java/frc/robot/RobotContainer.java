@@ -12,11 +12,17 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.filter.Debouncer;
+
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.ElevatorPIDAuto;
+import frc.robot.commands.ElevatorPIDAutoL1;
+import frc.robot.commands.ElevatorPIDAutoL2;
 import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.CoralAutoScore;
+import frc.robot.commands.CoralAutoScoreFast;
 import frc.robot.commands.CoralAutoStop;
+import frc.robot.commands.CoralAutoPreroller;
 //import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.Constants.ElevatorConstants;
@@ -45,7 +51,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 2% deadband
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 2% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -74,11 +80,13 @@ public class RobotContainer {
         //NamedCommands.registerCommand("elevatorL4", new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l4)));
         //NamedCommands.registerCommand("elevatorL1", new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l1)));
         // NamedCommands.registerCommand("elevatorL1", new ElevatorPID(elevator, ElevatorConstants.l1));
-        NamedCommands.registerCommand("elevatorL4", new ElevatorPIDAuto(elevator, ElevatorConstants.l2));
-        NamedCommands.registerCommand("elevatorL1", new ElevatorPIDAuto(elevator, ElevatorConstants.l1));
-        NamedCommands.registerCommand("AlignReef", new AlignToReefTagRelative(drivetrain, false));
+        NamedCommands.registerCommand("elevatorL2", new ElevatorPIDAutoL2(elevator, ElevatorConstants.l2));
+        NamedCommands.registerCommand("elevatorL4Actual", new ElevatorPIDAuto(elevator, ElevatorConstants.l4));
+        NamedCommands.registerCommand("elevatorL1", new ElevatorPIDAutoL1(elevator, ElevatorConstants.l1-0.5));
+        NamedCommands.registerCommand("AlignReef", new AlignToReefTagRelative(drivetrain, true));
         NamedCommands.registerCommand("scoreOut", new CoralAutoScore(coralroller));
-        NamedCommands.registerCommand("preRoller", new RunCommand(() -> coralroller.preRoller()));
+        NamedCommands.registerCommand("scoreOutFast", new CoralAutoScoreFast(coralroller));
+        NamedCommands.registerCommand("preRoller", new CoralAutoPreroller(coralroller));
         NamedCommands.registerCommand("stopCoralRollers", new CoralAutoStop(coralroller));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
@@ -136,8 +144,8 @@ public class RobotContainer {
         //joystick.leftBumper().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l3_5)));
         //joystick.rightBumper().whileTrue(new RunCommand(() -> elevator.elevatorToSetPoint(ElevatorConstants.l2_5)));
         subjoystick.x().onTrue(new ElevatorPID(elevator, ElevatorConstants.l1));
-        subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
-        subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
+        subjoystick.a().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2));
+        subjoystick.y().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3));
         subjoystick.b().onTrue(new ElevatorPID(elevator, ElevatorConstants.l4));
         joystick.leftBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l3_5));
         joystick.rightBumper().onTrue(new ElevatorPID(elevator, ElevatorConstants.l2_5));
@@ -145,10 +153,10 @@ public class RobotContainer {
         joystick.leftStick().onTrue(new AlignToReefTagRelative(drivetrain, true));
         //subjoystick.rightStick().onTrue(new AlignToReefTagRelative(drivetrain, false));
 
-        subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.pull()));
-        subjoystick.povLeft().onFalse(new RunCommand(() -> climb.stop()));
-        subjoystick.povRight().whileTrue(new RunCommand(() -> climb.reset()));
-        subjoystick.povRight().onFalse(new RunCommand(() -> climb.stop()));
+        subjoystick.povRight().whileTrue(new RunCommand(() -> climb.pull()));
+        subjoystick.povRight().debounce(0.2).onFalse(new RunCommand(() -> climb.stop()));
+        subjoystick.povLeft().whileTrue(new RunCommand(() -> climb.reset()));
+        subjoystick.povLeft().debounce(0.2).onFalse(new RunCommand(() -> climb.stop()));
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         //subjoystick.povUp().onTrue(elevator.disableElevatorPID());
         //subjoystick.povDown().onTrue(elevator.disableElevatorPID());
@@ -157,9 +165,9 @@ public class RobotContainer {
         //subjoystick.povDown().whileTrue(new RunCommand(() -> elevator.manualChange(-0.07)));
 
         subjoystick.povUp().whileTrue(new ElevatorManual(elevator, ElevatorConstants.elevatorSpeed + 0.05));
-        subjoystick.povUp().onFalse(new ElevatorManual(elevator, 0.05));
+        subjoystick.povUp().onFalse(new ElevatorManual(elevator, 0.01));
         subjoystick.povDown().whileTrue(new ElevatorManual(elevator, -ElevatorConstants.elevatorSpeed + 0.05));
-        subjoystick.povDown().onFalse(new ElevatorManual(elevator, 0.05));
+        subjoystick.povDown().onFalse(new ElevatorManual(elevator, 0.01));
 
         joystick.povUp().whileTrue(new RunCommand(() -> this.setSpeed(1.0)));
         joystick.povRight().whileTrue(new RunCommand(() -> this.setSpeed(0.400)));
@@ -168,15 +176,15 @@ public class RobotContainer {
         
         //rollers for subsystems
         subjoystick.rightBumper().whileTrue(new RunCommand(() -> coralroller.rollBack()));
-        subjoystick.rightBumper().onFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
-        subjoystick.leftBumper().onFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
+        subjoystick.rightBumper().whileFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
+        subjoystick.leftBumper().whileFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
         subjoystick.leftBumper().whileTrue(new RunCommand(() -> coralroller.preRoller()));
-        subjoystick.rightStick().onFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
+        subjoystick.rightStick().whileFalse(new RunCommand(() -> coralroller.stopCoralRollers()));
         subjoystick.rightStick().whileTrue(new RunCommand(() -> coralroller.scoreOut()));
 
         subjoystick.rightBumper().whileTrue(new RunCommand(() -> algaeroller.spinOut()));
-        subjoystick.rightBumper().onFalse(new RunCommand(() -> algaeroller.stopAlgaeRollers()));
-        subjoystick.leftBumper().onFalse(new RunCommand(() -> algaeroller.stopAlgaeRollers()));
+        subjoystick.rightBumper().whileFalse(new RunCommand(() -> algaeroller.stopAlgaeRollers()));
+        subjoystick.leftBumper().whileFalse(new RunCommand(() -> algaeroller.stopAlgaeRollers()));
         subjoystick.leftBumper().whileTrue(new RunCommand(() -> algaeroller.spinIn()));
     }
 
